@@ -34,3 +34,29 @@
 (define-data-var token-name (string-ascii 32) "Staked BTC")
 (define-data-var token-symbol (string-ascii 10) "stBTC")
 (define-data-var token-uri (optional (string-utf8 256)) none)
+
+;; Data maps
+(define-map staker-balances principal uint)
+
+(define-map staker-rewards principal uint)
+
+(define-map yield-distribution-history 
+    uint 
+    {
+        block: uint,
+        amount: uint,
+        apy: uint
+    }
+)
+
+(define-map risk-scores principal uint)
+
+(define-map insurance-coverage principal uint)
+
+(define-map allowances 
+    { 
+        owner: principal, 
+        spender: principal 
+    } 
+    uint
+)
