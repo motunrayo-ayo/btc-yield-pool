@@ -103,3 +103,16 @@
         new-score
     )
 )
+
+(define-private (check-yield-availability)
+    (let 
+        (
+            (current-block block-height)
+            (last-distribution (var-get last-distribution-block))
+        )
+        (if (>= current-block (+ last-distribution BLOCKS-PER-DAY))
+            (ok true)
+            (err ERR-NO-YIELD-AVAILABLE)
+        )
+    )
+)
