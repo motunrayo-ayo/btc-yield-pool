@@ -137,3 +137,31 @@
         )
     )
 )
+
+;; Public Functions
+(define-public (initialize-pool (initial-rate uint))
+    (begin
+        ;; Validate function caller
+        (asserts! (is-eq tx-sender contract-owner) (err ERR-OWNER-ONLY))
+        
+        ;; Check pool is not already initialized
+        (asserts! (not (var-get pool-active)) (err ERR-ALREADY-INITIALIZED))
+        
+        ;; Validate initial rate
+        (asserts! (and (> initial-rate u0) (<= initial-rate MAX-YIELD-RATE)) (err ERR-INVALID-AMOUNT))
+        
+        ;; Initialize pool
+        (var-set pool-active true)
+        (var-set yield-rate initial-rate)
+        (var-set last-distribution-block block-height)
+        
+        ;; Log initialization event
+        (print {
+            event: "pool-initialized",
+            initial-rate: initial-rate,
+            block: block-height
+        })
+        
+        (ok true)
+    )
+)
