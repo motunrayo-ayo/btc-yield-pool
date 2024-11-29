@@ -371,3 +371,10 @@
 (define-read-only (get-risk-score (staker principal))
     (ok (default-to u0 (map-get? risk-scores staker)))
 )
+
+;; Contract Initialization
+(begin
+    (var-set pool-active false)
+    (var-set insurance-active false)
+    (var-set last-distribution-block block-height)
+)
