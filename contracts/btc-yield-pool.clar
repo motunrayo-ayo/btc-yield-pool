@@ -327,3 +327,23 @@
         (ok true)
     )
 )
+
+(define-public (set-token-uri (new-uri (optional (string-utf8 256))))
+    (begin
+        ;; Validate owner
+        (asserts! (is-eq tx-sender contract-owner) (err ERR-OWNER-ONLY))
+        
+        ;; Validate URI if provided
+        (match new-uri 
+            uri (begin
+                (asserts! (<= (len uri) MAX-TOKEN-URI-LENGTH) (err ERR-INVALID-URI))
+                (print {
+                    event: "token-uri-updated",
+                    new-uri: uri
+                })
+                (ok (var-set token-uri (some uri)))
+            )
+            (ok (var-set token-uri none))
+        )
+    )
+)
