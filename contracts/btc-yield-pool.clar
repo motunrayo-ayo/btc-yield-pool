@@ -79,3 +79,27 @@
 
 (define-read-only (get-token-uri)
     (ok (var-get token-uri)))
+
+;; Internal Helper Functions
+(define-private (calculate-yield (amount uint) (blocks uint))
+    (let 
+        (
+            (rate (var-get yield-rate))
+            (time-factor (/ blocks BLOCKS-PER-DAY))
+            (base-yield (* amount rate))
+        )
+        (/ (* base-yield time-factor) u10000)
+    )
+)
+
+(define-private (update-risk-score (staker principal) (amount uint))
+    (let 
+        (
+            (current-score (default-to u0 (map-get? risk-scores staker)))
+            (stake-factor (/ amount u100000000))
+            (new-score (+ current-score stake-factor))
+        )
+        (map-set risk-scores staker new-score)
+        new-score
+    )
+)
