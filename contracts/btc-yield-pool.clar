@@ -203,3 +203,37 @@
         )
     )
 )
+
+(define-public (unstake (amount uint))
+    (let 
+        (
+            (current-balance (default-to u0 (map-get? staker-balances tx-sender)))
+        )
+        ;; Validate pool and balance
+        (asserts! (var-get pool-active) (err ERR-POOL-INACTIVE))
+        (asserts! (>= current-balance amount) (err ERR-INSUFFICIENT-BALANCE))
+        
+        ;; Process pending rewards
+        (try! (claim-rewards))
+        
+        ;; Update balances
+        (map-set staker-balances tx-sender (- current-balance amount))
+        (var-set total-staked (- (var-get total-staked) amount))
+        
+        ;; Update insurance coverage
+        (if (var-get insurance-active)
+            (map-set insurance-coverage tx-sender (- current-balance amount))
+            true
+        )
+        
+        ;; Log unstaking event
+        (print {
+            event: "unstake",
+            staker: tx-sender,
+            amount: amount,
+            remaining-balance: (- current-balance amount)
+        })
+        
+        (ok true)
+    )
+)
