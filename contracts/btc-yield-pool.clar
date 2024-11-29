@@ -116,3 +116,24 @@
         )
     )
 )
+
+(define-private (transfer-internal (amount uint) (sender principal) (recipient principal))
+    (begin
+        ;; Validate transfer amount
+        (asserts! (> amount u0) (err ERR-INVALID-AMOUNT))
+        (asserts! (not (is-eq sender recipient)) (err ERR-INVALID-AMOUNT))
+        
+        (let 
+            (
+                (sender-balance (default-to u0 (map-get? staker-balances sender)))
+            )
+            (asserts! (>= sender-balance amount) (err ERR-INSUFFICIENT-BALANCE))
+            
+            (map-set staker-balances sender (- sender-balance amount))
+            (map-set staker-balances recipient 
+                (+ (default-to u0 (map-get? staker-balances recipient)) amount)
+            )
+            (ok true)
+        )
+    )
+)
