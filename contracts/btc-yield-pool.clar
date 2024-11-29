@@ -303,3 +303,27 @@
         )
     )
 )
+
+;; Transfer and Allowance Functions
+(define-public (transfer (amount uint) (sender principal) (recipient principal) (memo (optional (buff 34))))
+    (begin
+        ;; Validate sender authorization
+        (asserts! (is-eq tx-sender sender) (err ERR-UNAUTHORIZED))
+        
+        ;; Perform internal transfer
+        (try! (transfer-internal amount sender recipient))
+        
+        ;; Handle optional memo
+        (match memo to-print (print to-print) 0x)
+        
+        ;; Log transfer event
+        (print {
+            event: "transfer",
+            sender: sender,
+            recipient: recipient,
+            amount: amount
+        })
+        
+        (ok true)
+    )
+)
