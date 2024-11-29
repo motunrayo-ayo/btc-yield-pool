@@ -60,3 +60,22 @@
     } 
     uint
 )
+
+;; SIP-010 Token Standard Functions
+(define-read-only (get-name)
+    (ok (var-get token-name)))
+
+(define-read-only (get-symbol)
+    (ok (var-get token-symbol)))
+
+(define-read-only (get-decimals)
+    (ok u8))
+
+(define-read-only (get-balance (account principal))
+    (ok (default-to u0 (map-get? staker-balances account))))
+
+(define-read-only (get-total-supply)
+    (ok (var-get total-staked)))
+
+(define-read-only (get-token-uri)
+    (ok (var-get token-uri)))
